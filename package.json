@@ -1,13 +1,19 @@
 {
   "name": "nodecg-tiltify",
-  "version": "0.0.0",
-  "description": "Tiltify API Client",
+  "version": "1.0.0",
+  "description": "Lets other bundles query the Tiltify API on behalf of a Tiltify App",
   "homepage": "https://github.com/daniellockard/nodecg-tiltify",
-  "author": {
+  "contributors": [{
     "name": "Danny Lockard",
-    "email": "danielhlockard@gmail.com",
-    "url": ""
-  },
+    "email": "danielhlockard@gmail.com"
+  }, {
+    "name": "Matt Haden",
+    "url": "https://github.com/Forceh91"
+  }, {
+    "name": "Nick T",
+    "email": "me@nt3rp.io",
+    "url": "https://nt3rp.io"
+  }],
   "files": [
     "extension.js"
   ],

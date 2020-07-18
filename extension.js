@@ -1,6 +1,9 @@
 'use strict'
 
 module.exports = function (nodecg) {
+  var campaignRep = nodecg.Replicant('campaign', {
+    defaultValue: {}
+  })
   var donationsRep = nodecg.Replicant('donations', {
     defaultValue: []
   })
@@ -25,20 +28,28 @@ module.exports = function (nodecg) {
 
   var TiltifyClient = require('tiltify-api-client')
 
-  if (nodecg.bundleConfig.tiltify_api_key === '') {
-    nodecg.log.info('Please set tiltify_api_key in cfg/nodecg-tiltify.json')
+  if (nodecg.bundleConfig.api_key === '') {
+    nodecg.log.info('Please set api_key in cfg/nodecg-tiltify.json')
     return
   }
 
-  if (nodecg.bundleConfig.tiltify_campaign_id === '') {
-    nodecg.log.info('Please set tiltify_campaign_id in cfg/nodecg-tiltify.json')
+  if (nodecg.bundleConfig.campaign_id === '') {
+    nodecg.log.info('Please set campaign_id in cfg/nodecg-tiltify.json')
     return
   }
 
-  var client = new TiltifyClient(nodecg.bundleConfig.tiltify_api_key)
+  var client = new TiltifyClient(nodecg.bundleConfig.api_key)
+
+  async function askTiltifyForCampaign () {
+    client.Campaigns.get(nodecg.bundleConfig.campaign_id, function (campaign) {
+      if (JSON.stringify(campaign.value) !== JSON.stringify(campaign)) {
+        campaignRep.value = campaign
+      }
+    })
+  }
 
   async function askTiltifyForDonations () {
-    client.Campaigns.getRecentDonations(nodecg.bundleConfig.tiltify_campaign_id, function (donations) {
+    client.Campaigns.getRecentDonations(nodecg.bundleConfig.campaign_id, function (donations) {
       for (let i = 0; i < donations.length; i++) {
         var found = donationsRep.value.find(function (element) {
           return element.id === donations[i].id
@@ -53,7 +64,7 @@ module.exports = function (nodecg) {
   }
 
   async function askTiltifyForAllDonations () {
-    client.Campaigns.getDonations(nodecg.bundleConfig.tiltify_campaign_id, function (alldonations) {
+    client.Campaigns.getDonations(nodecg.bundleConfig.campaign_id, function (alldonations) {
       if (JSON.stringify(allDonationsRep.value) !== JSON.stringify(alldonations)) {
         allDonationsRep.value = alldonations
       }
@@ -61,7 +72,7 @@ module.exports = function (nodecg) {
   }
 
   async function askTiltifyForPolls () {
-    client.Campaigns.getPolls(nodecg.bundleConfig.tiltify_campaign_id, function (polls) {
+    client.Campaigns.getPolls(nodecg.bundleConfig.campaign_id, function (polls) {
       if (JSON.stringify(pollsRep.value) !== JSON.stringify(polls)) {
         pollsRep.value = polls
       }
@@ -69,7 +80,7 @@ module.exports = function (nodecg) {
   }
 
   async function askTiltifyForSchedule () {
-    client.Campaigns.getSchedule(nodecg.bundleConfig.tiltify_campaign_id, function (schedule) {
+    client.Campaigns.getSchedule(nodecg.bundleConfig.campaign_id, function (schedule) {
       if (JSON.stringify(scheduleRep.value) !== JSON.stringify(schedule)) {
         scheduleRep.value = schedule
       }
@@ -77,7 +88,7 @@ module.exports = function (nodecg) {
   }
 
   async function askTiltifyForChallenges () {
-    client.Campaigns.getChallenges(nodecg.bundleConfig.tiltify_campaign_id, function (challenges) {
+    client.Campaigns.getChallenges(nodecg.bundleConfig.campaign_id, function (challenges) {
       if (JSON.stringify(challengesRep.value) !== JSON.stringify(challenges)) {
         challengesRep.value = challenges
       }
@@ -85,7 +96,7 @@ module.exports = function (nodecg) {
   }
 
   async function askTiltifyForRewards () {
-    client.Campaigns.getRewards(nodecg.bundleConfig.tiltify_campaign_id, function (rewards) {
+    client.Campaigns.getRewards(nodecg.bundleConfig.campaign_id, function (rewards) {
       if (JSON.stringify(rewardsRep.value) !== JSON.stringify(rewards)) {
         rewardsRep.value = rewards
       }
@@ -93,7 +104,7 @@ module.exports = function (nodecg) {
   }
 
   async function askTiltifyForTotal () {
-    client.Campaigns.get(nodecg.bundleConfig.tiltify_campaign_id, function (campaign) {
+    client.Campaigns.get(nodecg.bundleConfig.campaign_id, function (campaign) {
       if (campaignTotalRep.value !== parseFloat(campaign.amountRaised)) {
         campaignTotalRep.value = parseFloat(campaign.amountRaised)
       }
@@ -114,6 +125,7 @@ module.exports = function (nodecg) {
   }, 5000)
 
   setInterval(function() {
+    askTiltifyForCampaign()
     askTiltifyForAllDonations()
   }, 10000)
 

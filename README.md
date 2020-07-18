@@ -10,8 +10,8 @@ You will need to have an appropriate version of NodeCG installed to use it.
 
 ```
 {
-	"tiltify_api_key": "KEY_HERE",
-	"tiltify_campaign_id": "CAMPAIGN_HERE"
+	"api_key": "KEY_HERE",
+	"campaign_id": "CAMPAIGN_HERE"
 }
 ```
 
@@ -28,7 +28,7 @@ Available Replicants from the Tiltify API:
 - [X] `donations`
 - [X] `challenges`
 - [X] `rewards`
-- [ ] `campaign`: (Coming soon)
+- [X] `campaign`
 
 The replicants convert results from the Tiltify API into objects, and more information on the exact format of the data from these replicants can be found in the [Tiltify API docs](https://tiltify.github.io/api/).
 
